@@ -5,6 +5,5 @@ import (
 )
 
 func Migrate() {
-	Handle.AutoMigrate(&models.User{})
-	Handle.AutoMigrate(&models.Post{})
+	Handle.AutoMigrate(&models.User{}, &models.Post{})
 }
