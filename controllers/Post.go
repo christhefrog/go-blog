@@ -74,7 +74,7 @@ func DeletePost(c *gin.Context) {
 		return
 	}
 
-	c.Status(http.StatusOK)
+	c.JSON(http.StatusOK, gin.H{"result": "Success"})
 }
 
 func GetPosts(c *gin.Context) {
