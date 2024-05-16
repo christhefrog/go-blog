@@ -53,5 +53,8 @@ func main() {
 		api.DELETE("/users/:id", controllers.DeleteUser)
 	}
 
+	controllers.DemoLoadHTML(r)
+	r.GET("/demo", controllers.DemoIndex)
+
 	r.Run()
 }

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>go-blog demo</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body,
+        html {
+            width: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            text-align: center;
+            padding: 1rem;
+            background-color: whitesmoke;
+        }
+
+        article {
+            margin: 1rem;
+            padding: 1rem;
+            border-style: groove;
+            border-width: 1px;
+        }
+
+        i {
+            font-size: small;
+        }
+
+        p {
+            margin-top: 1rem;
+            white-space: pre-wrap;
+        }
+
+        button {
+            margin:1rem;
+            margin-top: 0;
+            padding:1rem;
+
+            background-color: white;
+            border-style: groove;
+            border-width: 1px;
+            border-radius: 4px;
+
+            cursor:pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>go-blog demo</h1>
+        <p>Check out the newest posts!</p>
+    </header>
+
+    <div id="articles" style="margin-top: 2rem;">
+
+    </div>
+
+    <script>
+        function fetchPosts(from = 0) {
+            fetch(`/api/posts?from=${from}`).then(res => res.json()).then(data => {
+                let more = document.querySelector('#more')
+
+                if(more !== null) {
+                    more.remove()
+                }
+
+                for (post of data.posts) {
+                    let date = new Date(post.CreatedAt).toLocaleDateString("pl-PL")
+                    let template = `<article>
+                        <h2>${post.Title}</h2>
+                        <i>#${post.ID}, ${date}</i>
+                        <p>${post.Body}</p>
+                    </article>`
+                    document.querySelector("#articles").insertAdjacentHTML("beforeend", template)
+                }
+                
+                if(data.posts.length == 10) { // PAGE_SIZE
+                    let template = `<button id="more" onclick="fetchPosts(${data.posts.at(-1).ID-1})">Fetch more posts</button>`
+                    document.querySelector("#articles").insertAdjacentHTML("beforeend", template)
+                }
+            })
+        }
+
+        fetchPosts()
+    </script>
+</body>
+
+</html>

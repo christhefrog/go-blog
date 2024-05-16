@@ -78,21 +78,26 @@ func DeletePost(c *gin.Context) {
 }
 
 func GetPosts(c *gin.Context) {
-	page, err := strconv.Atoi(c.Query("page"))
+	from, err := strconv.Atoi(c.Query("from"))
 
 	if err != nil {
-		page = 0
+		from = 0
 	}
 
-	if page < 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Pages start at 0"})
+	if from < 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "From should be greater than 0"})
 		return
 	}
 
 	var posts []models.Post
-	database.Handle.Limit(PAGE_SIZE).Offset(page * PAGE_SIZE).Find(&posts)
 
-	c.JSON(http.StatusOK, gin.H{"page": page, "posts": posts})
+	if from == 0 {
+		database.Handle.Limit(PAGE_SIZE).Order("id desc").Find(&posts)
+	} else {
+		database.Handle.Limit(PAGE_SIZE).Where("id <= ?", from).Order("id desc").Find(&posts)
+	}
+
+	c.JSON(http.StatusOK, gin.H{"from": from, "posts": posts})
 }
 
 func GetPostByID(c *gin.Context) {
